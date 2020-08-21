@@ -12,3 +12,7 @@ pom.xml.asc
 .lein-failures
 .nrepl-port
 .cpcache/
+resources/test/*.key
+resources/test/*.srl
+resources/test/*.crt
+resources/test/*.csr
