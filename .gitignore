@@ -16,3 +16,4 @@ resources/test/*.key
 resources/test/*.srl
 resources/test/*.crt
 resources/test/*.csr
+resources/test/*.pem
