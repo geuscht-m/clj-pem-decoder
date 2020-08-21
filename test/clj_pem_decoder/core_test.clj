@@ -12,4 +12,4 @@
 
 (deftest load-root-cert
   (testing "Check that we can load a single certificate"
-    (clj-pem-decoder.core/decode-pem "resources/test/ca-root.crt")))
+    (println (clj-pem-decoder.core/decode-pem "resources/test/ca-root.crt"))))
