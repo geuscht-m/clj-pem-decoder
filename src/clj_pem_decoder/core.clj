@@ -4,7 +4,9 @@
   (:import java.util.ArrayList
            java.security.cert.CertificateFactory
            java.io.ByteArrayInputStream
-           java.util.Base64))
+           java.util.Base64
+           java.security.KeyFactory
+           java.security.spec.PKCS8EncodedKeySpec))
 
 (defn- load-n-parse-pemfile
   [pem-file-name]
@@ -41,14 +43,28 @@
         cf (CertificateFactory/getInstance "X.509")]
     (.generateCertificate cf bin-in)))
 
+(defn- create-cert-array
+  [block-seq]
+  (into [] (if (= (get (first block-seq) :type) :private-key)
+             (map create-cert (rest block-seq))
+             (map create-cert block-seq))))
+
+(defn- create-private-key
+  [block-seq cert-arr]
+  (if (= (get (first block-seq) :type) :private-key)
+    (let [bin-key (.decode (Base64/getDecoder) (get (first block-seq) :data))
+          key     (PKCS8EncodedKeySpec. bin-key)]
+      (.generatePrivate (KeyFactory/getInstance "RSA") key))
+    nil))
+
 (defn decode-pem
   "Read a PEM file in standard format (private key first when present, followed
    by the certificate(s) and returns a map containing both the private key if
    present, and the certificate(s)"
   [pemfile]
   (let [pem-blocks   (load-n-parse-pemfile pemfile)
-        as-block-seq (map determine-block-type pem-blocks)]
-    (if (= (get (first as-block-seq) :type) :private-key)
-      (doto (println "Found private key, creating both private key and certificate object(s)"))
-      { :private-key nil :certificates (map create-cert as-block-seq)})))
+        as-block-seq (map determine-block-type pem-blocks)
+        cert-arr     (create-cert-array as-block-seq)]
+    { :private-key (create-private-key as-block-seq cert-arr)     
+     :certificates cert-arr}))
           

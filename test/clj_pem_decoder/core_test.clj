@@ -4,11 +4,11 @@
 
 (deftest load-basic-pem-test
   (testing "Check basic parsing"
-    (clj-pem-decoder.core/decode-pem "resources/test/test-cert.pem")))
+    (println (clj-pem-decoder.core/decode-pem "resources/test/test-cert.pem"))))
 
 (deftest load-pem-chain
   (testing "Check that we can load a basic test chain"
-    (clj-pem-decoder.core/decode-pem "resources/test/test-cert-chain.pem")))
+    (println (clj-pem-decoder.core/decode-pem "resources/test/test-cert-chain.pem"))))
 
 (deftest load-root-cert
   (testing "Check that we can load a single certificate"
