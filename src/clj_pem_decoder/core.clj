@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str])
   (:import java.util.ArrayList
-           java.security.cert.CertificateFactory
+           [java.security.cert CertificateFactory Certificate X509Certificate] 
            java.io.ByteArrayInputStream
            java.util.Base64
            java.security.KeyFactory
@@ -45,9 +45,9 @@
 
 (defn- create-cert-array
   [block-seq]
-  (into [] (if (= (get (first block-seq) :type) :private-key)
-             (map create-cert (rest block-seq))
-             (map create-cert block-seq))))
+  (into-array (if (= (get (first block-seq) :type) :private-key)
+                (map create-cert (rest block-seq))
+                (map create-cert block-seq))))
 
 (defn- create-private-key
   [block-seq cert-arr]
